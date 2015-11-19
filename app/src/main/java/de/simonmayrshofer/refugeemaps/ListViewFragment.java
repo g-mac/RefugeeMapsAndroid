@@ -54,7 +54,7 @@ public class ListViewFragment extends Fragment {
                 .doOnNext(hotspots -> saveData(hotspots)) //save data on bg thread
                 .observeOn(AndroidSchedulers.mainThread()) // run onSuccess on UI thread
                 .subscribe(hotspots1 -> {
-                    textView.setText("SUCCESFULLY RETRIEVED " + hotspots1.size() + " HOTSPOTS.");
+                    Toast.makeText(getActivity(), "SUCCESFULLY RETRIEVED " + hotspots1.size() + " HOTSPOTS.", Toast.LENGTH_SHORT).show();
                 }, throwable -> {
                     Log.d("ERROR", throwable.toString());
                 });

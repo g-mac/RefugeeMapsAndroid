@@ -31,11 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
         replaceFragment(webViewFragment);
 
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .add(R.id.main_activity_content_view, webViewFragment)
-//                .commit();
-
         setSupportActionBar(toolbar);
     }
 
