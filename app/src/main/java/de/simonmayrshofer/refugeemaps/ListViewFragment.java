@@ -64,7 +64,6 @@ public class ListViewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-
     private void saveData(List<Hotspot> hotspots) {
         for (Hotspot hotspot : hotspots) {
             hotspot.save();
@@ -80,18 +79,36 @@ public class ListViewFragment extends Fragment {
 
     @OnClick(R.id.button)
     public void onGetHotSpotClick() {
-        Hotspot hotspot = getRandomHotSpot();
-        try {
-            textView.setText(hotspot.getName()
-                    + ", " + hotspot.getTranslationList().get(0).getText()
-                    + ", " + hotspot.getPositionObject().getLat()
-                    + ", " + hotspot.getCategory());
-        } catch (Exception e) {
-            Toast.makeText(getActivity(), "" + e.toString(), Toast.LENGTH_SHORT).show();
+//        Hotspot hotspot = getRandomHotSpot();
+
+        List<Hotspot> hotspotList = getHotspotsForCategory("authorities");
+
+        String result = "";
+
+        for (Hotspot hotspot : hotspotList) {
+            try {
+                result = result.concat(hotspot.getName()
+//                    + ", " + hotspot.getTranslationList().get(0).getText()
+                        + ", " + hotspot.getPositionObject().getLat()
+                        + ", " + hotspot.getPositionObject().getLng()
+                        + ", " + hotspot.getCategory()
+                        + "\n\n");
+            } catch (Exception e) {
+                Toast.makeText(getActivity(), "" + e.toString(), Toast.LENGTH_SHORT).show();
+            }
         }
+
+        textView.setText(result);
     }
 
     private Hotspot getRandomHotSpot() {
         return new Select().from(Hotspot.class).orderBy("RANDOM()").executeSingle();
+    }
+
+    private List<Hotspot> getHotspotsForCategory(String category) {
+        return new Select()
+                .from(Hotspot.class)
+                .where("Category = ?", category)
+                .execute();
     }
 }
