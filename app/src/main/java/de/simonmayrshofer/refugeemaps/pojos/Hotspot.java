@@ -41,7 +41,7 @@ public class Hotspot extends Model {
         super();
     }
 
-    //----------------------------------------------------------------------------------------------
+    //--- Getters for Database Foreign Keys (Active Android, ORM) ----------------------------------
 
     public List<Translation> getTranslationList() {
         return getMany(Translation.class, "Hotspot");
@@ -52,7 +52,8 @@ public class Hotspot extends Model {
 //        return new Select().from(Position.class).where("Hotspot = ?", this.getId()).executeSingle();
     }
 
-    //----------------------------------------------------------------------------------------------
+    //--- Serializable Getters/Setters (needed for Retrofit) ---------------------------------------
+
 
     /**
      * @return The category
