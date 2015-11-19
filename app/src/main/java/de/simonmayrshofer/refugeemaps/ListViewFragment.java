@@ -59,11 +59,6 @@ public class ListViewFragment extends Fragment {
         ButterKnife.unbind(this);
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
-
     private void saveData(List<Hotspot> hotspots) {
         for (Hotspot hotspot : hotspots) {
             hotspot.save();
