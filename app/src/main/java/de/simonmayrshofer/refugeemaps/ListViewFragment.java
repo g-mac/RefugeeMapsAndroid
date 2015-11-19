@@ -41,11 +41,10 @@ public class ListViewFragment extends Fragment {
 
         apiManager.getHotspots("hamburg")
                 .subscribeOn(Schedulers.io()) // need to run network call on another bg thread
+                .doOnNext(hotspots -> saveData(hotspots)) //save data on bg thread
                 .observeOn(AndroidSchedulers.mainThread()) // run onSuccess on UI thread
-                .subscribe(hotspots -> {
-                    textView.setText("Number of Hotspots received: " + hotspots.size());
-                    Log.d("SIMON", "trial LAT: " + hotspots.get(0).getPosition().getLat());
-                    saveData(hotspots);
+                .subscribe(hotspots1 -> {
+                    textView.setText("SUCCESFULLY RETRIEVED " + hotspots1.size() + " HOTSPOTS.");
                 }, throwable -> {
                     Log.d("ERROR", throwable.toString());
                 });
@@ -64,7 +63,6 @@ public class ListViewFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
-
 
 
     private void saveData(List<Hotspot> hotspots) {
