@@ -8,10 +8,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.activeandroid.query.Select;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import de.simonmayrshofer.refugeemaps.pojos.Hotspot;
+import de.simonmayrshofer.refugeemaps.pojos.Position;
+import de.simonmayrshofer.refugeemaps.pojos.Translation;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -29,20 +37,15 @@ public class ListViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
         ButterKnife.bind(this, view);
 
-        Log.d("SIMON", "make call");
-
         APIManager apiManager = new APIManager();
 
         apiManager.getHotspots("hamburg")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io()) // need to run network call on another bg thread
+                .observeOn(AndroidSchedulers.mainThread()) // run onSuccess on UI thread
                 .subscribe(hotspots -> {
-                    String hotspotString = hotspots.get(0).toString();
-                    textView.setText(hotspotString);
-
-                    for (Hotspot hotspot : hotspots)
-                        Log.d("SIMON", hotspot.getAddress());
-
+                    textView.setText("Number of Hotspots received: " + hotspots.size());
+                    Log.d("SIMON", "trial LAT: " + hotspots.get(0).getPosition().getLat());
+                    saveData(hotspots);
                 }, throwable -> {
                     Log.d("ERROR", throwable.toString());
                 });
@@ -60,6 +63,37 @@ public class ListViewFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
 
+
+
+    private void saveData(List<Hotspot> hotspots) {
+        for (Hotspot hotspot : hotspots) {
+            hotspot.save();
+            Position position = hotspot.getPosition();
+            position.hotspot = hotspot;
+            position.save();
+            for (Translation translation : hotspot.getTranslations()) {
+                translation.hotspot = hotspot;
+                translation.save();
+            }
+        }
+    }
+
+    @OnClick(R.id.button)
+    public void onGetHotSpotClick() {
+        Hotspot hotspot = getRandomHotSpot();
+        try {
+            textView.setText(hotspot.getName()
+                    + ", " + hotspot.getTranslationList().get(0).getText()
+                    + ", " + hotspot.getPositionObject().getLat()
+                    + ", " + hotspot.getCategory());
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "" + e.toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private Hotspot getRandomHotSpot() {
+        return new Select().from(Hotspot.class).orderBy("RANDOM()").executeSingle();
     }
 }

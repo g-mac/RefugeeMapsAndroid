@@ -10,10 +10,12 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
 
         WebViewFragment webViewFragment = new WebViewFragment();
+        ListViewFragment listViewFragment = new ListViewFragment();
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.main_activity_content_view, webViewFragment)
+                .add(R.id.main_activity_content_view, listViewFragment)
                 .commit();
     }
+
 }
